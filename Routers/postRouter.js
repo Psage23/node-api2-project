@@ -20,7 +20,9 @@ router.post('/', (req, res) => {
 
 //POST - /api/posts/:id/comments - creates a comment for the post with the specified id using information sent inside of the request body.
 router.post('/:id/comments', (req,res) => {
-    const createComments = {...req.body, post_id: req.params.id}
+    const postID = parseInt(req.params.id)
+    const createComments = {...req.body, post_id: postID}
+    console.log(typeof req.params.id)
     if (!createComments.text) {
         res.status(400).json({ errorMessage: "Please provide text for the comment." })
     }
@@ -28,8 +30,9 @@ router.post('/:id/comments', (req,res) => {
         db.findById(req.params.id)
         .then(post => {
             if (post.length > 0) {
-                post.insertComment(createComments)
-                .then(comment => {comments
+                console.log(createComments)
+                db.insertComment(createComments)
+                .then(comment => {
                     res.status(201).json(comment);
                 })
                 .catch(error => {
@@ -41,7 +44,7 @@ router.post('/:id/comments', (req,res) => {
             }
         })
         .catch(error => {
-        res.status(500).json({error: "There was an error while saving the comment to the database"})
+        res.status(500).json({error: "Last catch error   There was an error while saving the comment to the database"})
     })
     }
 })
